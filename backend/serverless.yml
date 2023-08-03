@@ -1,0 +1,110 @@
+# @format
+
+service: drilling-job-board-backend
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE_JOBS: ${self:service}-jobs-table
+    JWT_SECRET: "YOUR_SECRET_KEY" # Replace with your secret key
+
+functions:
+  customAuthorizer:
+    handler: src/authorizer.handler
+    environment:
+      JWT_SECRET: "YOUR_SECRET_KEY" # Replace with your secret key
+    events:
+      - http:
+          path: /jobs
+          method: ANY
+          private: true
+          authorizer:
+            name: customAuthorizer
+            arn: # Replace with the ARN of the custom authorizer function
+  jobManagerRegistration:
+    handler: src/controllers/jobController.registerJobManager
+    events:
+      - http:
+          path: /job-manager/register
+          method: post
+          cors: true
+
+  jobManagerLogin:
+    handler: src/controllers/jobController.jobManagerLogin
+    events:
+      - http:
+          path: /job-manager/login
+          method: post
+          cors: true
+
+  createJob:
+    handler: src/controllers/jobController.createJob
+    events:
+      - http:
+          path: /jobs
+          method: post
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: # Replace with the ARN of the custom authorizer function
+
+  updateJob:
+    handler: src/controllers/jobController.updateJob
+    events:
+      - http:
+          path: /jobs/{jobId}
+          method: put
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: # Replace with the ARN of the custom authorizer function
+
+  deleteJob:
+    handler: src/controllers/jobController.deleteJob
+    events:
+      - http:
+          path: /jobs/{jobId}
+          method: delete
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: # Replace with the ARN of the custom authorizer function
+
+  getJob:
+    handler: src/controllers/jobController.getJob
+    events:
+      - http:
+          path: /jobs/{jobId}
+          method: get
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: # Replace with the ARN of the custom authorizer function
+
+  listJobs:
+    handler: src/controllers/jobController.listJobs
+    events:
+      - http:
+          path: /jobs
+          method: get
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: # Replace with the ARN of the custom authorizer function
+
+resources:
+  Resources:
+    JobsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_JOBS}
+        AttributeDefinitions:
+          - AttributeName: jobId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: jobId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

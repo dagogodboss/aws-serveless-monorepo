@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "esnext"],
+    "jsx": "react",
+    "outDir": "build",
+    "strict": true,
+    "esModuleInterop": true
+  }
+}

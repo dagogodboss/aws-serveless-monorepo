@@ -1,0 +1,13 @@
+{
+  "name": "drilling-job-board-notification",
+  "version": "1.0.0",
+  "description": "Notification services for the drilling company job board",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1035",
+    "twilio": "^3.72.0"
+  }
+}
