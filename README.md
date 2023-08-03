@@ -1,6 +1,6 @@
 # HOC JOB BOARD
 
-Project Name is a job board application for a drilling company that allows job managers to create jobs with dynamic fields like job description, name, client name, job location, price, etc. The application is built using AWS Serverless with Express TypeScript, DynamoDB, and ReactJS for the frontend. It also includes a notification system that allows employees to receive notices via email, on the app, and on their phone through the Twilio API when new jobs are added.
+ A job board application for a drilling company that allows job managers to create jobs with dynamic fields like job description, name, client name, job location, price, etc. The application is built using AWS Serverless with Express TypeScript, DynamoDB, and ReactJS for the frontend. It also includes a notification system that allows employees to receive notices via email, on the app, and on their phone through the Twilio API when new jobs are added.
 
 ## Features
 
