@@ -7,7 +7,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "watch": "tsc --watch",
-    "dev": "ts-node src/index.ts",
+    "dev": "npx sls offline start --stage dev --app serverless",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix"
   },
@@ -15,20 +15,27 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
     "aws-sdk": "^2.1035",
-    "twilio": "^3.72.0",
-    "jsonwebtoken": "^8.5.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^9.0.1",
+    "serverless-dotenv-plugin": "^6.0.0",
     "ts-node": "^10.2.1",
+    "twilio": "^4.15.0",
     "typescript": "^4.3.5",
     "uuid": "^8.3.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.80",
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.12",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "@typescript-eslint/parser": "^5.9.1",
-    "eslint": "^8.0.1"
+    "eslint": "^8.0.1",
+    "serverless-offline": "^12.0.4"
   }
 }

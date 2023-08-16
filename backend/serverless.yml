@@ -1,58 +1,59 @@
-# @format
-
 service: drilling-job-board-backend
 
 provider:
   name: aws
-  runtime: nodejs14.x
-  stage: dev
-  region: us-east-1
+  runtime: nodejs16.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1  
+  memorySize: 512
+  timeout: 29
   environment:
-    DYNAMODB_TABLE_JOBS: ${self:service}-jobs-table
-    JWT_SECRET: "YOUR_SECRET_KEY" # Replace with your secret key
+    DYNAMODB_TABLE_JOBS: ${self:service}-${self:provider.stage}-jobs
+    DYNAMODB_TABLE_EMPLOYEES: ${self:service}-${self:provider.stage}-employees
+    DYNAMODB_TABLE_CLIENTS: ${self:service}-${self:provider.stage}-clients
+    DYNAMODB_TABLE_NOTIFICATIONS: ${self:service}-${self:provider.stage}-notifications
+    JWT_SECRET: ${env:JWT_SECRET}
+    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
+    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
+    TWILIO_SENDER_PHONE_NUMBER: ${env:TWILIO_SENDER_PHONE_NUMBER}
+
+custom:
+  dotenv:
+    JWT_SECRET: ${env:JWT_SECRET}
+    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
+    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
+    TWILIO_SENDER_PHONE_NUMBER: ${env:TWILIO_SENDER_PHONE_NUMBER}
+  serverless-offline:
+    httpPort: 5555
 
 functions:
-  customAuthorizer:
-    handler: src/authorizer.handler
-    environment:
-      JWT_SECRET: "YOUR_SECRET_KEY" # Replace with your secret key
+  register:
+    handler: dist/index.register
     events:
       - http:
-          path: /jobs
-          method: ANY
-          private: true
-          authorizer:
-            name: customAuthorizer
-            arn: # Replace with the ARN of the custom authorizer function
-  jobManagerRegistration:
-    handler: src/controllers/jobController.registerJobManager
-    events:
-      - http:
-          path: /job-manager/register
+          path: auth/register
           method: post
-          cors: true
 
-  jobManagerLogin:
-    handler: src/controllers/jobController.jobManagerLogin
+  login:
+    handler: dist/index.login
     events:
       - http:
-          path: /job-manager/login
+          path: auth/login
           method: post
-          cors: true
 
   createJob:
-    handler: src/controllers/jobController.createJob
+    handler: dist/index.createJob
     events:
       - http:
-          path: /jobs
+          path: jobs
           method: post
           cors: true
           authorizer:
             name: customAuthorizer
-            arn: # Replace with the ARN of the custom authorizer function
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
 
   updateJob:
-    handler: src/controllers/jobController.updateJob
+    handler: dist/index.updateJob
     events:
       - http:
           path: /jobs/{jobId}
@@ -60,10 +61,10 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            arn: # Replace with the ARN of the custom authorizer function
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
 
   deleteJob:
-    handler: src/controllers/jobController.deleteJob
+    handler: dist/index.deleteJob
     events:
       - http:
           path: /jobs/{jobId}
@@ -71,10 +72,10 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            arn: # Replace with the ARN of the custom authorizer function
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
 
   getJob:
-    handler: src/controllers/jobController.getJob
+    handler: dist/index.getJob
     events:
       - http:
           path: /jobs/{jobId}
@@ -82,10 +83,10 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            arn: # Replace with the ARN of the custom authorizer function
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
 
   listJobs:
-    handler: src/controllers/jobController.listJobs
+    handler: dist/index.listJobs
     events:
       - http:
           path: /jobs
@@ -93,8 +94,49 @@ functions:
           cors: true
           authorizer:
             name: customAuthorizer
-            arn: # Replace with the ARN of the custom authorizer function
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
 
+  createEmployee:
+    handler: dist/index.createEmployee
+    events:
+      - http:
+          path: employees
+          method: post
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
+
+  createClient:
+    handler: dist/index.createClient
+    events:
+      - http:
+          path: clients
+          method: post
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
+
+  createNotification:
+    handler: dist/index.createNotification
+    events:
+      - http:
+          path: notifications
+          method: post
+          cors: true
+          authorizer:
+            name: customAuthorizer
+            arn: arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:service}-${self:provider.stage}-customAuthorizer
+
+package:
+  individually: true
+useDotenv: true
+configValidationMode: error
+ 
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
 resources:
   Resources:
     JobsTable:
@@ -107,4 +149,48 @@ resources:
         KeySchema:
           - AttributeName: jobId
             KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    EmployeesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_EMPLOYEES}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    ClientsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_CLIENTS}
+        AttributeDefinitions:
+          - AttributeName: clientId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: clientId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    NotificationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_NOTIFICATIONS}
+        AttributeDefinitions:
+          - AttributeName: notificationId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: notificationId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
