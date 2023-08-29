@@ -7,23 +7,23 @@ provider:
   region: us-east-1  
   memorySize: 512
   stackName: drilling-job-board-backend-${self:provider.stage}
-  timeout: 35
+  timeout: 29
   environment:
-    DYNAMODB_TABLE_JOBS: ${self:service}-${self:provider.stage}-jobs
-    DYNAMODB_TABLE_EMPLOYEES: ${self:service}-${self:provider.stage}-employees
-    DYNAMODB_TABLE_CLIENTS: ${self:service}-${self:provider.stage}-clients
-    DYNAMODB_TABLE_NOTIFICATIONS: ${self:service}-${self:provider.stage}-notifications
-    JWT_SECRET: ${env:JWT_SECRET}
-    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
-    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
-    TWILIO_SENDER_PHONE_NUMBER: ${env:TWILIO_SENDER_PHONE_NUMBER}
+    DYNAMODB-TABLE-JOBS: ${self:service}-${self:provider.stage}-jobs
+    DYNAMODB-TABLE-EMPLOYEES: ${self:service}-${self:provider.stage}-employees
+    DYNAMODB-TABLE-CLIENTS: ${self:service}-${self:provider.stage}-clients
+    DYNAMODB-TABLE-NOTIFICATIONS: ${self:service}-${self:provider.stage}-notifications
+    JWT-SECRET: ${env:JWT-SECRET}
+    TWILIO-ACCOUNT-SID: ${env:TWILIO-ACCOUNT-SID}
+    TWILIO-AUTH-TOKEN: ${env:TWILIO-AUTH-TOKEN}
+    TWILIO-SENDER-PHONE-NUMBER: ${env:TWILIO-SENDER-PHONE-NUMBER}
 
 custom:
   dotenv:
-    JWT_SECRET: ${env:JWT_SECRET}
-    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
-    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
-    TWILIO_SENDER_PHONE_NUMBER: ${env:TWILIO_SENDER_PHONE_NUMBER}
+    JWT-SECRET: ${env:JWT-SECRET}
+    TWILIO-ACCOUNT-SID: ${env:TWILIO-ACCOUNT-SID}
+    TWILIO-AUTH-TOKEN: ${env:TWILIO-AUTH-TOKEN}
+    TWILIO-SENDER-PHONE-NUMBER: ${env:TWILIO-SENDER-PHONE-NUMBER}
   serverless-offline:
     httpPort: 5555
 
