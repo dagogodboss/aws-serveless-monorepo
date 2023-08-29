@@ -25,7 +25,7 @@ custom:
     TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
     TWILIO_SENDER_PHONE_NUMBER: ${env:TWILIO_SENDER_PHONE_NUMBER}
   serverless-offline:
-    httpPort: 5555
+    httpPort: 4040
 
 functions:
   register:
