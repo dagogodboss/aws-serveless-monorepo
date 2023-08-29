@@ -6,7 +6,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1  
   memorySize: 512
-  stackName: drilling-job-board-backend-${self:provider.stage}
+  stackName: drilling-job-board-backend-dev
   timeout: 35
   environment:
     DYNAMODB_TABLE_JOBS: ${self:service}-${self:provider.stage}-jobs
@@ -132,8 +132,8 @@ functions:
 
 package:
   individually: true
-  useDotenv: true
-  configValidationMode: error
+useDotenv: true
+configValidationMode: error
  
 plugins:
   - serverless-offline
