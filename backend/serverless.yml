@@ -6,7 +6,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1  
   memorySize: 512
-  stackName: drilling-job-board-backend-dev-${self:provider.stage}
+  stackName: drilling-job-board-backend-${self:provider.stage}
   timeout: 29
   environment:
     DYNAMODB_TABLE_JOBS: ${self:service}-${self:provider.stage}-jobs
