@@ -30,4 +30,4 @@ jobs:
         run: npm run install-backend
 
       - name: Deploy Serverless application
-        run: cd backend && npx serverless deploy
+        run: cd backend && npx serverless deploy -v
