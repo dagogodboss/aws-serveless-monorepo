@@ -132,8 +132,8 @@ functions:
 
 package:
   individually: true
-useDotenv: true
-configValidationMode: error
+  useDotenv: true
+  configValidationMode: error
  
 plugins:
   - serverless-offline
